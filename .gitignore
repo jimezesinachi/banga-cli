@@ -2,3 +2,5 @@ node_modules/
 test-app/*
 !test-app/tests*
 to-do
+.env
+.env.example

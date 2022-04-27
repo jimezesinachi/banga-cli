@@ -7,8 +7,11 @@
     "banga": "bin/index.js"
   },
   "scripts": {
-    "test": "npm run test",
+    "test": "jest --watchAll --detectOpenHandles --runInBand",
     "create-app": "banga new test-app --no-git --force"
+  },
+  "jest": {
+    "testTimeout": 30000
   },
   "repository": {
     "type": "git",
