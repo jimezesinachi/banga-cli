@@ -26,7 +26,8 @@ class UserService {
 
     const user = await User.findByIdAndUpdate(
       { _id: user_id },
-      { $set: data }
+      { $set: data },
+      { new: true }
     );
     if (!user) throw new CustomError("User dosen't exist", 404);
 
