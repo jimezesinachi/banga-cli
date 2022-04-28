@@ -3,7 +3,6 @@ const connectToDB = require('../../src/config/mongo-db.config');
 const { auth, AuthService } = require('../../src/services/auth.service');
 const User = require('../../src/models/user.model');
 
-
 beforeAll(async () => {
     await connectToDB();
     await User.deleteMany();
@@ -12,7 +11,6 @@ beforeAll(async () => {
 afterAll((done) => {
     mongoose.connection.close(() => done());
 });
-
 
 describe('Testing signup function', () => {
     const data = {
