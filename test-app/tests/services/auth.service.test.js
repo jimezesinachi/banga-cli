@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const connectToDB = require('../../src/config/mongo-db.config');
-const { auth, AuthService } = require('../../src/services/auth.service');
+const { AuthServ, AuthService } = require('../../src/services/auth.service');
 const User = require('../../src/models/user.model');
 
 beforeAll(async () => {
@@ -20,13 +20,13 @@ describe('Testing signup function', () => {
     }
 
     test("User data is complete, and user email does not exist in database", async () => {
-        const newUser = await auth.signup(data);
+        const newUser = await AuthServ.signup(data);
 
-        expect(typeof newUser.user_id).toEqual('object');
+        expect(newUser.user_id).toBeTruthy();
         expect(newUser.email).toEqual('ezesinachijim@gmail.com');
         expect(newUser.role).toEqual('USER');
         expect(newUser.has_verified_email).toEqual(false);
-        expect(typeof newUser.auth_token).toEqual('string');
+        expect(newUser.auth_token).toBeTruthy();
     });
 });
 
@@ -37,12 +37,12 @@ describe('Testing signin function', () => {
     }
 
     test("User data is complete, and user email exists in database", async () => {
-        const newUser = await auth.signin(data);
+        const newUser = await AuthServ.signin(data);
 
-        expect(typeof newUser.user_id).toEqual('object');
+        expect(newUser.user_id).toBeTruthy();
         expect(newUser.email).toEqual('ezesinachijim@gmail.com');
         expect(newUser.role).toEqual('USER');
         expect(newUser.has_verified_email).toEqual(false);
-        expect(typeof newUser.auth_token).toEqual('string');
+        expect(newUser.auth_token).toBeTruthy();
     });
 });

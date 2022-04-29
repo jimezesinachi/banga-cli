@@ -10,9 +10,6 @@
     "test": "jest --watchAll --detectOpenHandles --runInBand",
     "create-app": "banga new test-app --no-git --force"
   },
-  "jest": {
-    "testTimeout": 30000
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/saucecodee/banga.git"

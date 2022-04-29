@@ -217,4 +217,4 @@ class AuthService {
   }
 }
 
-module.exports = { auth: new AuthService(), AuthService };
+module.exports = { AuthServ: new AuthService(), AuthService };

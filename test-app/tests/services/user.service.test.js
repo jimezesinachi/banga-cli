@@ -18,7 +18,7 @@ describe('Testing findAll function', () => {
 
         expect(Array.isArray(users)).toEqual(true);
         expect(typeof users[0]).toEqual('object');
-        expect(typeof users[0]._id).toEqual('object');
+        expect(users[0]._id).toBeTruthy();
         expect(users[0].email).toEqual('ezesinachijim@gmail.com');
         expect(users[0].role).toEqual('USER');
         expect(users[0].has_verified_email).toEqual(false);
@@ -33,7 +33,7 @@ describe('Testing findOne function', () => {
         const findUser = await findOne(data);
 
         expect(typeof findUser).toEqual('object');
-        expect(typeof findUser._id).toEqual('object');
+        expect(findUser._id).toBeTruthy();
         expect(findUser.email).toEqual('ezesinachijim@gmail.com');
         expect(findUser.role).toEqual('USER');
         expect(findUser.has_verified_email).toEqual(false);
