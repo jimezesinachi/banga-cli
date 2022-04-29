@@ -1,4 +1,4 @@
-const { AuthServ } = require("./../services/auth.service");
+const { AuthServ, AuthService } = require("./../services/auth.service");
 const { response } = require("./../utils");
 
 class AuthContoller {
@@ -13,7 +13,7 @@ class AuthContoller {
   }
 
   async requestEmailVerification(req, res) {
-    const result = await AuthServ.requestEmailVerification(req.body);
+    const result = await AuthService.requestEmailVerification(req.body);
     res.status(200).send(response("Email verfication OTP sent", result));
   }
 

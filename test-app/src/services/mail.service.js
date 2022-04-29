@@ -8,7 +8,7 @@ class MailService {
     this.data = data;
   }
 
-  async send({ subject, content, recipient, from }) {
+  static async send({ subject, content, recipient, from }) {
     from = from || `${config.APP_NAME} <noreply@${config.nodemailer.DOMAIN}>`
     content = content || " "
 
@@ -43,7 +43,7 @@ class MailService {
     const content = `Use the OTP code ${otp} to complete your email verification.`
     const recipient = this.data.email
 
-    return await this.send({ subject, content, recipient })
+    return await MailService.send({ subject, content, recipient })
   }
 
   async sendPasswordResetMail({ otp }) {
@@ -51,7 +51,7 @@ class MailService {
     const content = `Use the OTP code ${otp} to reset your password.`
     const recipient = this.data.email
 
-    return await this.send({ subject, content, recipient })
+    return await MailService.send({ subject, content, recipient })
   }
 
   async sendAdminInviteMail({ link }) {
@@ -59,7 +59,7 @@ class MailService {
     const content = `You have been invited to join ${config.APP_NAME} as an admin, Please click on the link to join ${link}`
     const recipient = this.data.email
 
-    return await this.send({ subject, content, recipient })
+    return await MailService.send({ subject, content, recipient })
   }
 }
 
