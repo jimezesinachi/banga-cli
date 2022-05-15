@@ -9,7 +9,7 @@ class MailService {
   }
 
   static async send({ subject, content, recipient, from }) {
-    from = from || `${config.APP_NAME} <noreply@${config.nodemailer.DOMAIN}>`
+    from = from || `${config.APP_NAME} <jim@${config.nodemailer.DOMAIN}>`
     content = content || " "
 
     if (!recipient || recipient.length < 1) throw new CustomError("Recipient is required");

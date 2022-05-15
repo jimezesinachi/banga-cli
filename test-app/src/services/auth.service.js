@@ -27,7 +27,7 @@ class AuthService {
     }).save();
 
     // Send email verification mail
-    AuthService.requestEmailVerification(user)
+    await AuthService.requestEmailVerification(user)
 
     const auth_token = jwt.sign(
       { user_id: user._id, role: user.role },
@@ -80,7 +80,7 @@ class AuthService {
   /** 
    * Request email verification by sending OTP to user email
    * @param {Object} data  Request Body
-   * @returns {null}
+   * @returns {Object}
    */
    static async requestEmailVerification(data) {
     const { email } = data
@@ -89,11 +89,11 @@ class AuthService {
     if (!user) throw new CustomError("Email does not exist")
     if (user.has_verified_email) throw new CustomError("Email is already verified")
 
-    let token = await Token.findOne({ user_id: user._id })
+    let token = await Token.findOne({ userId: user._id })
     if (token) await token.deleteOne()
 
-    let verifyToken = crypto.randomBytes(6).toString("hex")
-    const passwordHash = await bcrypt.hash(verifyToken, config.BCRYPT_SALT);
+    let otp = crypto.randomBytes(6).toString("hex")
+    const passwordHash = await bcrypt.hash(otp, config.BCRYPT_SALT);
 
     token = await new Token({
       userId: user._id,
@@ -102,15 +102,15 @@ class AuthService {
     }).save()
 
     // Send Mail
-    new MailServ(user).sendEmailVerificationMail({ verifyToken })
+    await new MailServ(user).sendEmailVerificationMail({ otp })
 
-    return
+    return { token, otp }
   }
 
   /** 
    * Verify user email with valid OTP
    * @param {Object} data  Request Body
-   * @returns {null}
+   * @returns {Object}
    */
   async verifyEmail(data) {
     const { email, otp } = data
@@ -119,7 +119,7 @@ class AuthService {
     if (!user) throw new CustomError("Email does not exist")
     if (user.has_verified_email) throw new CustomError("Email is already verified")
 
-    let VToken = await Token.findOne({ email })
+    let VToken = await Token.findOne({ userId: user._id })
     if (!VToken) throw new CustomError("Invalid or expired OTP")
 
     const isValid = await bcrypt.compare(otp, VToken.token)
@@ -130,15 +130,15 @@ class AuthService {
       { $set: { has_verified_email: true } }
     )
 
-    await VToken.deleteOne()
+    await Token.deleteOne({ email })
 
-    return
+    return VToken
   }
 
   /** 
    * Sends a reset password OTP to user email
    * @param {Object} data  Request Body
-   * @returns {null}
+   * @returns {Object}
    */
   async requestPasswordReset(data) {
     const { email } = data
@@ -146,36 +146,39 @@ class AuthService {
     const user = await User.findOne({ email })
     if (!user) throw new CustomError("Email does not exist")
 
-    let token = await Token.findOne({ user_id: user._id })
+    let token = await Token.findOne({ userId: user._id })
     if (token) await token.deleteOne()
 
-    let resetToken = crypto.randomBytes(32).toString("hex")
-    const hash = await bcrypt.hash(resetToken, config.BCRYPT_SALT);
+    let otp = crypto.randomBytes(32).toString("hex")
+    const hash = await bcrypt.hash(otp, config.BCRYPT_SALT);
 
-    await new Token({
+    token = await new Token({
       userId: user._id,
       token: hash,
       created_at: Date.now()
     }).save()
 
     // Send Mail
-    new MailServ(user).sendPasswordResetMail({ resetToken })
+    await new MailServ(user).sendPasswordResetMail({ otp })
 
-    return
+    return { token, otp }
   }
 
   /** 
    * Reset user password
    * @param {Object} data  Request Body
-   * @returns {null}
+   * @returns {Object}
    */
   async resetPassword(data) {
-    const { email, resetToken, password } = data
+    const { email, otp, password } = data
 
-    let RToken = await Token.findOne({ email })
+    const user = await User.findOne({ email })
+    if (!user) throw new CustomError("Email does not exist")
+
+    let RToken = await Token.findOne({ userId: user._id })
     if (!RToken) throw new CustomError("Invalid or expired password reset OTP")
 
-    const isValid = await bcrypt.compare(resetToken, RToken.token)
+    const isValid = await bcrypt.compare(otp, RToken.token)
     if (!isValid) throw new CustomError("Invalid or expired password reset OTP")
 
     const passwordHash = await bcrypt.hash(password, config.BCRYPT_SALT);
@@ -185,35 +188,35 @@ class AuthService {
       { $set: { password: passwordHash } }
     )
 
-    await RToken.deleteOne()
+    await Token.deleteOne({ email })
 
-    return
+    return RToken
   }
 
   /** 
    * Update user password 
    * @param {Object} data  Request Body
-   * @returns {null}
+   * @returns {Object}
    */
   async updatePassword(data) {
     const { USER_ID, password } = data
 
     const user = await User.findOne({ _id: USER_ID });
-    if (!user) throw new CustomError("User dose not exist")
+    if (!user) throw new CustomError("User does not exist")
 
-    //Check if user password is correct
+    // Check if user password is correct
     const isValidPassword = await bcrypt.compare(password, user.password)
     if (!isValidPassword) throw new CustomError("Incorrect password");
 
     const passwordHash = await bcrypt.hash(password, config.BCRYPT_SALT)
 
-    await User.updateOne(
+    const updatedUser = await User.updateOne(
       { _id: USER_ID },
       { $set: { password: passwordHash } },
       { new: true }
     )
 
-    return
+    return updatedUser
   }
 }
 

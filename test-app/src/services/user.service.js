@@ -16,7 +16,7 @@ class UserService {
       { _id: user_id },
       { password: 0, __v: 0 }
     );
-    if (!user) throw new CustomError("User does not exist");
+    if (!user) throw new CustomError("User does not exist", 404);
 
     return user
   }
@@ -29,7 +29,7 @@ class UserService {
       { $set: data },
       { new: true }
     );
-    if (!user) throw new CustomError("User dosen't exist", 404);
+    if (!user) throw new CustomError("User doesn't exist", 404);
 
     return user;
   }
@@ -37,9 +37,8 @@ class UserService {
   async deleteOne(data) {
     const { user_id } = data
 
-    const user = await User.findOne({ _id: user_id });
-    if (!user) throw new CustomError("User dosen't exist", 404);
-    user.remove()
+    const user = await User.findOneAndDelete({ _id: user_id });
+    if (!user) throw new CustomError("User doesn't exist", 404);
 
     return user
   }

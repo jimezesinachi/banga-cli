@@ -19,24 +19,24 @@ describe('Testing findAll function', () => {
         expect(Array.isArray(users)).toEqual(true);
         expect(typeof users[0]).toEqual('object');
         expect(users[0]._id).toBeTruthy();
-        expect(users[0].email).toEqual('ezesinachijim@gmail.com');
+        expect(users[0].email).toEqual('tilotar536@doerma.com');
         expect(users[0].role).toEqual('USER');
-        expect(users[0].has_verified_email).toEqual(false);
+        expect(users[0].has_verified_email).toEqual(true);
 
         user = users[0];
     });
 });
 
 describe('Testing findOne function', () => {
-    test("Getting all existing users from database", async () => {
+    test("Getting one existing user from database", async () => {
         let data = {user_id: user._id}
         const findUser = await findOne(data);
 
         expect(typeof findUser).toEqual('object');
         expect(findUser._id).toBeTruthy();
-        expect(findUser.email).toEqual('ezesinachijim@gmail.com');
+        expect(findUser.email).toEqual('tilotar536@doerma.com');
         expect(findUser.role).toEqual('USER');
-        expect(findUser.has_verified_email).toEqual(false);
+        expect(findUser.has_verified_email).toEqual(true);
     });
 });
 
@@ -49,7 +49,7 @@ describe('Testing updateOne function', () => {
         const updateUser = await updateOne(data);
 
         expect(typeof updateUser).toEqual('object');
-        expect(updateUser.email).toEqual('ezesinachijim@gmail.com');
+        expect(updateUser.email).toEqual('tilotar536@doerma.com');
         expect(updateUser.name).not.toEqual('Jim Ezesinachi');
         expect(updateUser.name).toEqual('Jim E');
         
