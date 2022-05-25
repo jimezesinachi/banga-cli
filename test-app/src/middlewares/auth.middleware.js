@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("./../models/user.model");
-const config = require("./../config")
+const config = require("./../config");
 const { CustomError } = require("./../utils");
 
 
@@ -25,12 +25,12 @@ function auth(roles = [], idor = false) {
       throw new CustomError("User does not exist", 401);
 
     // Check if user status is "active"
-    // if (user.status.toUpperCase() !== config.user_status.ACTIVE)
-    //   throw new CustomError("User has been deactivated", 403);
-// 
-    // // Check if user mail is verified
-    // if (!user.has_verified_email)
-    //   throw new CustomError("User email is unverified", 403);
+    if (user.status.toUpperCase() !== config.user_status.ACTIVE)
+      throw new CustomError("User has been deactivated", 403);
+
+    // Check if user mail is verified
+    if (!user.has_verified_email)
+      throw new CustomError("User email is unverified", 403);
 
     // Check if route is IDOR enabled 
     const requesting_user = req.params.user_id || req.body.user_id || req.query.user_id
